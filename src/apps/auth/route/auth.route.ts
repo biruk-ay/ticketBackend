@@ -94,7 +94,7 @@ const logout = async (req: Request, res: Response) => {
   return void res.status(200).json({ result: "Logged Out" });
 };
 
-authRouter.post("/register", registerUser);
+authRouter.post("/signup", registerUser);
 authRouter.post("/login", login);
 authRouter.post("/refresh", refresh);
 authRouter.post("/logout", logout);

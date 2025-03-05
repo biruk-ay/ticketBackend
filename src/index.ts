@@ -4,6 +4,9 @@ import { connectDB } from './configs/db.js';
 import cors from 'cors';
 import authRouter from './apps/auth/route/auth.route.js';
 import cookieParser from 'cookie-parser';
+import { authenticate, authorize } from './apps/auth/middleware/auth.middleware.js';
+import { ticketRouter } from './apps/ticket/route/ticket.route.js';
+import { adminRouter } from './apps/admin/route/admin.route.js';
 
 dotenv.config();
 
@@ -24,6 +27,8 @@ app.use(express.json());
 app.use(cookieParser());
 
 app.use("/auth", authRouter);
+app.use("/ticket", authenticate, ticketRouter);
+app.use("/admin", authenticate, authorize(["admin"]), adminRouter);
 
 if (!PORT) {
   console.error("PORT is not defined in .env file");
