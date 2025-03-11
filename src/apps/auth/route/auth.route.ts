@@ -29,9 +29,10 @@ const registerUser = async (req: Request, res: Response) => {
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
       secure: true,
-      sameSite: false,
+      sameSite: "strict",
       path: "/",
-      maxAge: 604800000
+      domain: "vercel.app",
+      maxAge: 604800000,
     });
 
     return void res.status(200).json({
@@ -64,9 +65,10 @@ const login = async (req: Request, res: Response) => {
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
       secure: true,
-      sameSite: false,
+      sameSite: "strict",
       path: "/",
-      maxAge: 604800000
+      domain: "vercel.app",
+      maxAge: 604800000,
     });
 
     return void res.status(200).json({
