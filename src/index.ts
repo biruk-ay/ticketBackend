@@ -29,6 +29,9 @@ app.use(cookieParser());
 app.use("/auth", authRouter);
 app.use("/ticket", authenticate, ticketRouter);
 app.use("/admin", authenticate, authorize(["admin"]), adminRouter);
+app.get("/", (req, res) => {
+  res.send("Deployment Successful");
+})
 
 if (!PORT) {
   console.error("PORT is not defined in .env file");
