@@ -15,12 +15,12 @@ const registerUser = async (req: Request, res: Response) => {
   try {
     const user = await authRepository.readData(email);
     if (user) return void res.status(409).json({ error: "user already exists" });
-    const hashedPassword = hash(password, 10);
+    const hashedPassword = await hash(password, 10) as string;
     const newUser = new UserModel({
-      role,
       name,
       email,
-      hashedPassword,
+      password: hashedPassword,
+      role
     });
     const result = await authRepository.createData(newUser);
     const accessToken = Token.generateAccessToken(result._id as string);
@@ -28,16 +28,18 @@ const registerUser = async (req: Request, res: Response) => {
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
       secure: true,
-      sameSite: "strict",
+      sameSite: "none",
+      path: "/"
     });
     return void res.status(200).json({
+      id: result.id,
       role: result.role,
       name: result.name,
       email: result.email,
       token: accessToken,
     });
   } catch (error) {
-    res.status(500).json({ error: "Internal server error" });
+    void res.status(500).json({ error: "Internal server error" });
   }
 };
 
@@ -58,11 +60,14 @@ const login = async (req: Request, res: Response) => {
 
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
-      secure: true,
-      sameSite: "strict",
+      secure: false,
+      sameSite: "lax",
+      path: "/",
+      maxAge: 604800000
     });
 
     return void res.status(200).json({
+      id: user.id,
       role: user.role,
       name: user.name,
       email: user.email,
@@ -75,15 +80,14 @@ const login = async (req: Request, res: Response) => {
 
 const refresh = async (req: Request, res: Response) => {
   const refreshToken = req.cookies.refreshToken;
+  console.log("Refresh: ", refreshToken);
   if (!refreshToken) return void res.status(401).json({ error: "Unauthorized" });
 
   try {
-    const payload = jwt.verify(
-      refreshToken,
-      process.env.REFRESH_TOKEN as string
-    ) as { id: string };
+    const payload = jwt.verify(refreshToken, process.env.REFRESH_TOKEN as string) as { id: string };
     const newAccessToken = Token.generateAccessToken(payload.id);
-    return void res.status(200).json({ accessToken: newAccessToken });
+    console.log("new Token: ", newAccessToken);
+    return void res.status(200).json({ token: newAccessToken });
   } catch (error) {
     res.json(403).json({ error: "Invalid refresh token" });
   }

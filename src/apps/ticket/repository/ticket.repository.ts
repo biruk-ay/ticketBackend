@@ -8,9 +8,15 @@ class TicketRepository extends MongoRepository<ITicket> {
     }
  
     public async createData(resource: ITicket) {
-        const document = new this.model(resource);
-        await document.save();
-        return document;
+        try {
+            const document = new this.model(resource);
+            if (!document) throw new Error("Ticket creation failed");
+            await document.save();
+            return document;
+        } catch (error) {
+            console.error("Error Saving Ticket:", error);
+            throw new Error("Database error while saving ticket");
+        }
     }
 
     public async readData(id: string) {
@@ -44,6 +50,7 @@ class TicketRepository extends MongoRepository<ITicket> {
         if (!result) {
             throw new Error(`Resource with ${id} not found for updating`)
         }
+        return result;
     }
     public async readAll() {
         return await this.model.find();

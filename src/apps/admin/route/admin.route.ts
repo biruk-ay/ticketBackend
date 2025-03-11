@@ -10,12 +10,12 @@ const update = async (req: AuthRequest, res: Response) => {
     if (!req.user) {
         return void res.status(401).json({ message: "Unauthenticated" });
     }
-    const id = req.params.id;
-    const status = req.body;
+    const { status, id } = req.body;
     try {
         const result = await ticketRepository.updateStatus(id, status);
+        return void res.status(200).json({"Updated: ": result});
     } catch (error) {
-        res.status(500).json({ error: "Internal server errro"});
+        res.status(500).json({ error: "Internal server error"});
     }
 }
 
@@ -28,7 +28,7 @@ const allTicketsAdmin = async (req: AuthRequest, res: Response) => {
         const result = await ticketRepository.readAll();
         return void res.status(200).json({ results: result });
     } catch (error) {
-        res.status(500).json({ error: "Internal server errro"});
+        res.status(500).json({ error: "Internal server error"});
     }
 }
 

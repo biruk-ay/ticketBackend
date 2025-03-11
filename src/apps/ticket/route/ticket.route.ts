@@ -8,20 +8,22 @@ const ticketRouter = Router();
 
 const create = async (req: AuthRequest, res: Response) => {
     const { title, description, status } = req.body;
+    console.log(title, description, status);
     if (!req.user) {
         return void res.status(401).json({ message: "Unauthenticated" });
     }
     const id = req.user.id;
     try {
         const newTicket = new TicketModel({
-            id,
+            owner: id,
             title,
             description,
             status
         });
         const result = await ticketRepository.createData(newTicket);
-        return void res.status(200);
+        return void res.status(200).json({ message: "Ticket created successfully"});
     } catch (error) {
+        console.error("Server Error ", error)
         res.status(500).json({ error: "Internal server error"});
     }
 }
@@ -35,7 +37,7 @@ const allTickets = async (req: AuthRequest, res: Response) => {
         const result = await ticketRepository.readByOwner(id);
         return void res.status(200).json({ results: result })
     } catch(error) {
-        res.status(500).json({ error: "Internal server errro" });
+        res.status(500).json({ error: "Internal server error" });
     }
 }
 

@@ -17,6 +17,7 @@ interface DecodedToken extends JwtPayload {
 
 const authenticate = async (req: AuthRequest, res: Response, next: NextFunction) => {
     const token = req.header("Authorization")?.split(" ")[1];
+    console.log(token);
     if (!token) return void res.status(401).json({ message: "Unauthenticated" });
 
     try {
