@@ -25,12 +25,15 @@ const registerUser = async (req: Request, res: Response) => {
     const result = await authRepository.createData(newUser);
     const accessToken = Token.generateAccessToken(result._id as string);
     const refreshToken = Token.generateRefreshToken(result._id as string);
+
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
       secure: true,
-      sameSite: "none",
-      path: "/"
+      sameSite: false,
+      path: "/",
+      maxAge: 604800000
     });
+
     return void res.status(200).json({
       id: result.id,
       role: result.role,
@@ -60,8 +63,8 @@ const login = async (req: Request, res: Response) => {
 
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
-      secure: false,
-      sameSite: "lax",
+      secure: true,
+      sameSite: false,
       path: "/",
       maxAge: 604800000
     });
