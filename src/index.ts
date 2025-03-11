@@ -17,7 +17,7 @@ const app = express();
 connectDB();
 app.use(express.json());
 app.use('/', cors({
-  origin: "http://localhost:5173",
+  origin: true,
   optionsSuccessStatus: 200,
   preflightContinue: false,
   methods: "GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS",
