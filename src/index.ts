@@ -17,7 +17,7 @@ const app = express();
 connectDB();
 app.use(express.json());
 app.use('/', cors({
-  origin: true,
+  origin: "https://ticket-frontend-five.vercel.app",
   optionsSuccessStatus: 200,
   preflightContinue: false,
   methods: "GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS",
