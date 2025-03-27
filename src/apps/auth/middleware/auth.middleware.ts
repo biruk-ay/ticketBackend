@@ -17,12 +17,14 @@ interface DecodedToken extends JwtPayload {
 
 const authenticate = async (req: AuthRequest, res: Response, next: NextFunction) => {
     const token = req.header("Authorization")?.split(" ")[1];
-    console.log(token);
+    console.log("auth middleware token", token);
     if (!token) return void res.status(401).json({ message: "Unauthenticated" });
 
     try {
         const decoded = jwt.verify(token, process.env.ACCESS_TOKEN as string) as DecodedToken;
+        console.log("auth middleware decoded: ", decoded);
         const user = await UserModel.findById(decoded.id).select("-password");
+        console.log("auth middleware user: ", user);
         if (!user) {
             return void res.status(404).json({ message: "User not found" });
         }
@@ -42,6 +44,7 @@ const authenticate = async (req: AuthRequest, res: Response, next: NextFunction)
 const authorize = (roles: string[]) => {
     return async (req: AuthRequest, res: Response, next: NextFunction) => {
         const user = await UserModel.findById(req.user?.id);
+        console.log("auth middleware authorize: ",user);
         if(!user || !roles.includes(user.role)) {
             return void res.status(403).json({ message: "Unauthorized"});
         }

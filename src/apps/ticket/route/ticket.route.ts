@@ -37,6 +37,7 @@ const allTickets = async (req: AuthRequest, res: Response) => {
         const result = await ticketRepository.readByOwner(id);
         return void res.status(200).json({ results: result })
     } catch(error) {
+        console.error("Server Error: ", error);
         res.status(500).json({ error: "Internal server error" });
     }
 }

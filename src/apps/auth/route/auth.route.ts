@@ -27,12 +27,10 @@ const registerUser = async (req: Request, res: Response) => {
     const refreshToken = Token.generateRefreshToken(result._id as string);
 
     res.cookie("refreshToken", refreshToken, {
-      httpOnly: true,
       secure: true,
+      httpOnly: true,
       sameSite: "none",
       path: "/",
-      domain: ".vercel.app",
-      maxAge: 604800000,
     });
 
     return void res.status(200).json({
@@ -63,12 +61,10 @@ const login = async (req: Request, res: Response) => {
     const refreshToken = Token.generateRefreshToken(user._id as string);
 
     res.cookie("refreshToken", refreshToken, {
-      httpOnly: true,
       secure: true,
+      httpOnly: true,
       sameSite: "none",
       path: "/",
-      domain: ".vercel.app",
-      maxAge: 604800000,
     });
 
     return void res.status(200).json({
@@ -85,7 +81,7 @@ const login = async (req: Request, res: Response) => {
 
 const refresh = async (req: Request, res: Response) => {
   const refreshToken = req.cookies.refreshToken;
-  console.log("Refresh: ", refreshToken);
+  console.log("Refresh Cookie: ", refreshToken);
   if (!refreshToken) return void res.status(401).json({ error: "Unauthorized" });
 
   try {

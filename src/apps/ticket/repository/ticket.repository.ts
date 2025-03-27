@@ -39,6 +39,9 @@ class TicketRepository extends MongoRepository<ITicket> {
         }
     }
     public async readByOwner(id: string) {
+        if (!Types.ObjectId.isValid(id)) {
+            throw new Error(`Invalid ObjectId: ${id}`);
+        }
         const result = await this.model.find({ owner: new Types.ObjectId(id) });
         if (!result.length) {
             throw new Error(`No products found for owner ID ${id}`);
